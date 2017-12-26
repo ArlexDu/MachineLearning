@@ -1,5 +1,8 @@
 import numpy as np
 import math
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
 # load data from dataset and get a available information
 def loadData():
     dataList = []
@@ -25,15 +28,24 @@ def getRandomPoint(k,data):
 def getDistance(a,b):
     return sum((a - b)**2)
 
+def showResult(data,centers,result):
+    k = centers.shape[0]
+    count = data.shape[0]
+    marks = ['ob','og','oc','om','oy','ok']
+    for i in range(count):
+        index = result[i,0]
+        mark = marks[index]
+        plt.plot(data[i,0],data[i,1],mark)
+    for i in range(k):
+        plt.plot(centers[i,0],centers[i,1], 'Dr', markersize = 10)
+    plt.show()
+
 # Kmeans core scripts
 def Kmeans(centers,data):
     row = data.shape[0]
     k = centers.shape[0]
-    result = np.mat(np.zeros((row,1)))
-    t = 0
+    result = np.mat(np.zeros((row,1)).astype(int))
     while 1:
-        t += 1
-        print(t)
         lceters = centers.copy()
         for i in range(row):
             item = data.A[i,:]
@@ -53,7 +65,7 @@ def Kmeans(centers,data):
         # if the center points won't change any further, we could know that we have get the optimize classes
         if (lceters == centers).all():
             break
-    return result
+    return result,centers
 
 
 # main function which is the start of the script
@@ -61,13 +73,12 @@ def main():
     # k classes need to be classify
     k = 3
     # get data matrix
-    data = np.mat(loadData())
+    data = loadData()
+    pca = PCA(n_components=2)
+    data = np.mat(pca.fit_transform(data))
     # get random initial central point
     centers = getRandomPoint(k,data)
-    result = Kmeans(centers,data)
-    for j in range(k):
-        print('the %d class is :' % j)
-        item_class = data[np.nonzero(result[:, 0] == j)[0]]
-        print(item_class.shape[0])
+    result,centers = Kmeans(centers,data)
+    showResult(data,centers,result)
 
 main()
