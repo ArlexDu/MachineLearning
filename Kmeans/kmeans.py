@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 
 # load data from dataset and get a available information
-def loadData():
+def loadData(file):
     dataList = []
-    with open('data.data','r') as file:
+    with open(file,'r') as file:
         data = file.readlines()
         for line in data:
             dom = line.split(',')[:-1]
@@ -69,11 +69,9 @@ def Kmeans(centers,data):
 
 
 # main function which is the start of the script
-def main():
-    # k classes need to be classify
-    k = 3
+def test(file,k):
     # get data matrix
-    data = loadData()
+    data = loadData(file)
     pca = PCA(n_components=2)
     data = np.mat(pca.fit_transform(data))
     # get random initial central point
@@ -81,4 +79,6 @@ def main():
     result,centers = Kmeans(centers,data)
     showResult(data,centers,result)
 
-main()
+# first param is data file path and second param is k classes need to be classify
+test('iris.csv',3)
+test('rank.csv',5)
